@@ -6,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-cv::Point2f Decision_making::kalman_filter(cv::Mat& res,Point2f center, float distance)
+cv::Point2f Decision_making::kalman_filter(Mat& res, Point2f center, float distance)
 {
     // 定义和初始化卡尔曼滤波器
     KalmanFilter kf(4, 2, 0); // 状态变量4，测量值2
@@ -29,7 +29,7 @@ cv::Point2f Decision_making::kalman_filter(cv::Mat& res,Point2f center, float di
     state.at<float>(1) = center.y;
     state.at<float>(2) = 0;
     state.at<float>(3) = 0;
-    cout<<"["<<center.x<<" "<<center.y<<"]";
+    //cout<<"["<<center.x<<" "<<center.y<<"]";
     
     Mat state_estimate(4, 1, CV_32F);  // 估计状态
     Mat error_cov(4, 4, CV_32F);       // 估计的协方差矩阵
@@ -49,7 +49,7 @@ cv::Point2f Decision_making::kalman_filter(cv::Mat& res,Point2f center, float di
     state_estimate = kf.statePost;
     // 返回预测的中心点
     cv::Point2f predicted_center(state_estimate.at<float>(0), state_estimate.at<float>(1));
-    cout<<"["<<predicted_center.x*10000<<" "<<predicted_center.y*10000<<"]"<<endl;
+    //cout<<"["<<predicted_center.x*10000<<" "<<predicted_center.y*10000<<"]"<<endl;
     cv::circle(res, predicted_center*10000, 5, cv::Scalar(255, 0, 0), -1);
     cv::circle(res, center, 5, cv::Scalar(0, 0, 255), 1);
     return predicted_center;

@@ -17,7 +17,7 @@ int main()
     Light_bar light_bar(color);//加载灯条识别类
     Armor_manager armor_manager;//加载装甲板管理类
     Decision_making decision_making;//加载决策类
-    cv::VideoCapture cap("/home/tarsyc/opencv/1/Infantry_blue.avi");
+    cv::VideoCapture cap("/home/tarsyc/robomaster/Infantry_red.avi");
     cv::Mat frame;
     cv::namedWindow("frame",cv::WINDOW_AUTOSIZE);
     while(true)
@@ -28,7 +28,7 @@ int main()
         armor_manager.process(res,armors,temp_armors,timestamp);//装甲板管理
         armor_manager.draw(res,armors);//画出装甲板
         decision_making.decision(res,armors);//决策并跟踪
-        cv::imshow("frame",res);
+        cv::imshow("frame",res);;
         timestamp++;
         //cv::waitKey(0);
         if(cv::waitKey(30) == 'q')                                   

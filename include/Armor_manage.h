@@ -20,6 +20,7 @@ class Armor_manager
     void process(cv::Mat& frame,std::vector<Armor>& armors,std::vector<Armor>& temp_armors,long long int timestamp)//装甲板管理,更新和增减
     {
         armors_select(frame,armors,temp_armors,timestamp);
+        std::cout<<temp_armors.size()<<std::endl;
         //armors_delect();
     }
     cv::Mat draw(cv::Mat frame,std::vector<Armor>& armors);

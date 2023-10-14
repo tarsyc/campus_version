@@ -15,7 +15,7 @@ void Armor_manager::armors_select(Mat& frame,vector<Armor>& armors,vector<Armor>
         {  
             if(temp_armors[i].digital=armors[j].digital)
             {
-                if(abs(temp_armors[i].angle-armors[j].angle)<30)//
+                if(abs(temp_armors[i].angle-armors[j].angle)<40&&abs(temp_armors[i].center.x-armors[j].center.y)<150)//
                 {
                     armors[j].update(temp_armors[i].center,temp_armors[i].width,temp_armors[i].height,temp_armors[i].angle,timestamp);//更新装甲板数据
                     found=true;
