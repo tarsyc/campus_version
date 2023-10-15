@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "Armor.h"
-//此类识别图像，创建装甲板，并完成解算
+//此类识别图像，创建装甲板
 class Light_bar
 {
     public:

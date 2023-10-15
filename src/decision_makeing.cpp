@@ -33,7 +33,7 @@ int Decision_making::decision_making(vector<Armor>& armors)
                     max_index=i;
                 }
             }
-            //可以增加更多的判断条件
+            //可以增加更多的判断条件，在md文件中有详细的说明
    }
    return max_index;
 }

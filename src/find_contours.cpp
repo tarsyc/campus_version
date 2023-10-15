@@ -8,7 +8,7 @@ using namespace cv;
 
 Mat Light_bar::find_contours(Mat frame, Mat hsv, vector<Armor>& temp_armors,long long int timestamp)
 {
-    // 寻找轮廓，使用椭圆拟合轮廓
+    // 寻找轮廓，拟合轮廓
     resize(frame, frame, cv::Size(640, 480));
     vector<vector<Point>> contours;
     vector<cv::RotatedRect>lightbar;
