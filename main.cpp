@@ -17,7 +17,7 @@ int main()
     Light_bar light_bar(color);//加载灯条识别类
     Armor_manager armor_manager;//加载装甲板管理类
     Decision_making decision_making;//加载决策类
-    cv::VideoCapture cap("/home/tarsyc/下载/T-DT2023-OpenCV/video/Infantry_blue.avi");
+    cv::VideoCapture cap("/home/tarsyc/下载/T-DT2023-OpenCV/video/Infantry_red.avi");
     cv::Mat frame;
     cv::namedWindow("frame",cv::WINDOW_AUTOSIZE);
     while(true)
