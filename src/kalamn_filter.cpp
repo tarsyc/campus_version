@@ -35,7 +35,7 @@ cv::Point2f Decision_making::kalman_filter(Mat& res, Point2f center, float dista
     Mat error_cov(4, 4, CV_32F);       // 估计的协方差矩阵
 
     // 卡尔曼滤波的时间步长
-    float time_step = distance / 25000;
+    float time_step = distance / 25000;//25m/s激光枪
     //cout<<time_step<<endl;
     // 预测
     kf.predict();
@@ -50,7 +50,7 @@ cv::Point2f Decision_making::kalman_filter(Mat& res, Point2f center, float dista
     // 返回预测的中心点
     cv::Point2f predicted_center(state_estimate.at<float>(0), state_estimate.at<float>(1));
     //cout<<"["<<predicted_center.x*10000<<" "<<predicted_center.y*10000<<"]"<<endl;
-    cv::circle(res, predicted_center*10000, 5, cv::Scalar(255, 0, 0), -1);
+    cv::circle(res, predicted_center*10000, 5, cv::Scalar(255, 0, 0), 1);
     cv::circle(res, center, 5, cv::Scalar(0, 0, 255), 1);
     return predicted_center;
 }
