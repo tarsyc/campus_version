@@ -37,6 +37,6 @@ int Armor::pose_estimation()
     cv::solvePnP(objectPoints,imagePoints,cameraMatrix,disCoeffs,rvec,tvec,useExtrinsicGuess,flags);
     //计算平移向量的长度
     float distance = cv::norm(tvec, cv::NORM_L2);
-    //std::cout<<"distance:"<<distance/10<<std::endl;
+    std::cout<<"distance:"<<distance/10<<std::endl;
     return distance;
 }

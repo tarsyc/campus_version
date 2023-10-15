@@ -24,7 +24,7 @@ Mat Armor_manager::draw(Mat frame, vector<Armor>& armors) {
             line(frame, rect_points[j], rect_points[(j + 1) % 4], Scalar(0, 255, 0), 1);
         }
         putText(frame, to_string(armors[i].digital), rect_points[3], FONT_HERSHEY_SIMPLEX, 0.7, Scalar(255, 255, 0), 1);
-        putText(frame, to_string(i), rect_points[0], FONT_HERSHEY_SIMPLEX, 0.7, Scalar(255, 255, 0), 1);
+        putText(frame, to_string(i+1), (rect_points[0]+rect_points[3])/2, FONT_HERSHEY_SIMPLEX, 0.7, Scalar(0, 255, 255), 1);
     }
 
     return frame; // 返回处理后的帧
