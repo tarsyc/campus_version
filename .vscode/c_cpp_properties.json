@@ -5,8 +5,10 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/local/include/opencv4",
-                "${workspaceFolder}/include",
-                "/opt/intel/**"
+                "${workspaceFolder}/include/Armor",
+                "/opt/intel/**",
+                "${workspaceFolder}/include/Buff",
+                "/opt/intel/openvino_2023.1.0/runtime/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

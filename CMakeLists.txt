@@ -5,13 +5,13 @@ project(RecognizeProject)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCES
-    src/img_process.cpp
-    src/find_contours.cpp
-    src/armors_select.cpp
-    src/cnn_recognize.cpp
-    src/pose_estimation.cpp
-    src/decision_makeing.cpp
-    src/kalamn_filter.cpp
+    armor_src/img_process.cpp
+    armor_src/find_contours.cpp
+    armor_src/armors_select.cpp
+    armor_src/cnn_recognize.cpp
+    armor_src/pose_estimation.cpp
+    armor_src/decision_makeing.cpp
+    armor_src/kalamn_filter.cpp
     main.cpp
 )
 
@@ -21,14 +21,14 @@ find_package(yaml-cpp REQUIRED)
 
 
 add_executable(recognize main.cpp 
-    src/img_process.cpp 
-    src/find_contours.cpp 
-    src/armors_select.cpp 
-    src/draw_armors.cpp 
-    src/cnn_recognize.cpp 
-    src/pose_estimation.cpp
-    src/decision_makeing.cpp
-    src/kalamn_filter.cpp
+    armor_src/img_process.cpp 
+    armor_src/find_contours.cpp 
+    armor_src/armors_select.cpp 
+    armor_src/draw_armors.cpp 
+    armor_src/cnn_recognize.cpp 
+    armor_src/pose_estimation.cpp
+    armor_src/decision_makeing.cpp
+    armor_src/kalamn_filter.cpp
     )
 
 
