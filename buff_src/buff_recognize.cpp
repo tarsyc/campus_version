@@ -21,7 +21,7 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
     
     vector<vector<Point>> contours; 
     findContours(roi, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);
-    const int min_size = 100;
+    const int min_size = 150;
     //对轮廓进行初筛选
     for(int i=0;i<contours.size();i++)
     {
@@ -33,44 +33,51 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
     }
     //合并轮廓
     vector<vector<Point>> merge_contours;
+    vector<double> angles;
     for(int i=0;i<contours.size();i++)
-    {   
-        bool found = false;
-        RotatedRect rect1 = minAreaRect(contours[i]);
-        for(int j=i+1;j<contours.size();j++)
+    {
+        RotatedRect rotatedRect =minAreaRect(contours[i]);
+        double angle = rotatedRect.angle;
+        double aspectRatio = std::max(rotatedRect.size.width, rotatedRect.size.height) / std::min(rotatedRect.size.width, rotatedRect.size.height);
+        if(abs(aspectRatio)>=1.2)
         {
-            RotatedRect rect2 = minAreaRect(contours[j]);
-            if(abs(rect1.angle-rect2.angle)<5&&abs(rect1.center.x-rect2.center.x)<5&&abs(rect1.center.y-rect2.center.y)<5)
+            bool merged = false;
+            for(int j=0;j<merge_contours.size();j++)
+            {
+                if(abs(angles[j]-angle)<10.0)
+                {
+                    merge_contours[j].insert(merge_contours[j].end(),contours[i].begin(),contours[i].end());
+                    angles[j] = (angles[j]+angle)/2.0;
+                    merged = true;
+                    break;
+                }
+            }
+            if(!merged)
             {
                 merge_contours.push_back(contours[i]);
-                merge_contours.push_back(contours[j]);
+                angles.push_back(angle);
             }
         }
-        if(!found)
-        {
-            merge_contours.push_back(contours[i]);
-        }
     }
-    //对合并后的轮廓进行筛选
-    vector<RotatedRect> final_rects;
+    vector<RotatedRect> finalRects;
+    //对轮廓进行筛选，面积不能太小或太大，并且长宽比不能太大    
     for(int i=0;i<merge_contours.size();i++)
     {
-        RotatedRect rect = minAreaRect(merge_contours[i]);
-        if(rect.size.width*rect.size.height>100&&rect.size.width*rect.size.height<8000)
+        RotatedRect rotatedRect = minAreaRect(merge_contours[i]);
+        double aspectRatio = std::max(rotatedRect.size.width, rotatedRect.size.height) / std::min(rotatedRect.size.width, rotatedRect.size.height);
+        if(aspectRatio>1.2 && aspectRatio<2.5 && rotatedRect.size.area()>1000 && rotatedRect.size.area()<10000)
         {
-            final_rects.push_back(rect);
+            finalRects.push_back(rotatedRect);
         }
     }
-
-    cout<<"final_rects.size():"<<final_rects.size()<<endl;
-    //绘制出所有轮廓
-    for(int i=0;i<final_rects.size();i++)
+    //画出最终的矩形
+    for(int i=0;i<finalRects.size();i++)
     {
         Point2f vertices[4];
-        final_rects[i].points(vertices);
-        for (int j = 0; j < 4; j++)
+        finalRects[i].points(vertices);
+        for(int j=0;j<4;j++)
         {
-            line(roi_img, vertices[j], vertices[(j + 1) % 4], Scalar(0, 255, 0), 2);
+            line(roi_img,vertices[j],vertices[(j+1)%4],Scalar(0,255,0),2);
         }
     }
     return roi_img ;
