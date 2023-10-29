@@ -7,6 +7,7 @@
 #include <vector>
 
 
+
 class Armor_manager
 {
     public:
@@ -19,6 +20,6 @@ class Armor_manager
     cv::Mat draw(cv::Mat frame,std::vector<Armor>& armors);
     private:
     void armors_select(cv::Mat& frame,std::vector<Armor>& armors,std::vector<Armor>& temp_armors,long long int timestamp);
-    //void armors_delect();
+    
 };
 #endif  

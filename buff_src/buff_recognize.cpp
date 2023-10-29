@@ -3,9 +3,11 @@
 #include "Buff_manage.h"
 #include <vector>
 #include "Buff.h"
+#include <openvino/openvino.hpp>
 
 using namespace std;
 using namespace cv;
+using namespace ov;
 
 Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
 {
@@ -80,5 +82,63 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
             line(roi_img,vertices[j],vertices[(j+1)%4],Scalar(0,255,0),2);
         }
     }
-    return roi_img ;
+    //将roi_img 旋转到旋转矩形的角度，然后框选
+    vector<Mat> roi_cuts;
+    for(int i=0;i<finalRects.size();i++)
+    {
+        Mat roi_cut;
+        Mat rotationMatrix=getRotationMatrix2D(finalRects[i].center,finalRects[i].angle,1);
+        warpAffine(roi_img,roi_cut,rotationMatrix,roi_img.size());
+        //截取区域并存入vector
+        Rect rect(finalRects[i].center.x-finalRects[i].size.width/2,finalRects[i].center.y-finalRects[i].size.height/2,finalRects[i].size.width,finalRects[i].size.height);
+        roi_cut = roi_cut(rect);
+        roi_cuts.push_back(roi_cut);
+    }
+    //使用openvino进行识别
+    Core core;
+    CompiledModel model = core.compile_model("../config/nn.onnx", "CPU");
+    InferRequest infer_request = model.create_infer_request();
+    Tensor input_tensor = infer_request.get_input_tensor(0);
+    Shape tensor_shape = input_tensor.get_shape();
+    for (int i = 0; i < roi_cuts.size(); i++) {
+        // 图像预处理
+        Mat roi_image = roi_cuts[i];
+        cvtColor(roi_image, roi_image, COLOR_BGR2HSV);
+        inRange(roi_image, Scalar(73, 80, 175), Scalar(107, 255, 255), roi_image);
+        // 将roi区域转换为32x32的图像
+        resize(roi_image, roi_image, Size(32, 32));
+
+
+        // 将图像转换为1x1x32x32的图像
+        Mat input_blob = dnn::blobFromImage(roi_image, 1.0, Size(32, 32), Scalar(0), true, false);
+        normalize(input_blob, input_blob, -1.0, 1.0, NORM_MINMAX);
+
+        // 获取输入数据指针
+        float* input_data = input_blob.ptr<float>();
+
+        // 将输入数据复制到OpenVINO张量
+        auto input_data_ptr = input_tensor.data<float>();
+        std::memcpy(input_data_ptr, input_data, input_blob.total() * input_blob.elemSize());
+
+        // 进行推断
+        infer_request.infer();
+
+        //输出
+        auto output = infer_request.get_output_tensor();
+        const float* output_buffer = output.data<float>();
+        //输出类别的概率
+        int pred, max = -100;
+        for (int i = 0; i < output.get_size(); i++)
+        {
+            if (output_buffer[i] > max)
+            {
+                max = output_buffer[i];
+                pred = i;
+            }
+        }
+        putText(roi_img, to_string(pred), finalRects[i].center, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2, 8);
+
+    }
+    cout << endl;
+    return roi_img;
 }
