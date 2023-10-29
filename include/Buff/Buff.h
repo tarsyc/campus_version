@@ -5,17 +5,23 @@
 #include <iostream>
 
 
-class Buff//Buff基类,每个buff都继承这个类，自检测，自识别，自跟踪
+class Buff//Buff基类,每个buff都继承这个类，自识别，自跟踪
 {
     public:
     bool is_buff0 = false;
     cv::RotatedRect buff_rect;
-
+    Buff(cv::Mat& roi,cv::RotatedRect buff_rect):buff_rect(buff_rect)
+    {
+        //bool is_buff0= buff_recognize(roi);
+        //track_point = buff_rect.center;
+    }
+    void update(cv::Mat& roi,cv::RotatedRect buff_rect)
+    {
+        //bool is_buff0= buff_recognize(roi);
+       // track_point = buff_rect.center;
+    }
     private:
-    int buff_recognize(cv::Mat roi);
-    cv::Point2f track_point;
+    //int buff_recognize(cv::Mat roi);
+    //cv::Point2f track_point;
 };
-
-std::vector<Buff>buffs;//存储所有buff
-
 #endif

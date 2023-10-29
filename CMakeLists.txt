@@ -12,6 +12,7 @@ set(SOURCES
     armor_src/pose_estimation.cpp
     armor_src/decision_makeing.cpp
     armor_src/kalamn_filter.cpp
+    buff_src/buff_recognize.cpp
     main.cpp
 )
 
@@ -29,10 +30,11 @@ add_executable(recognize main.cpp
     armor_src/pose_estimation.cpp
     armor_src/decision_makeing.cpp
     armor_src/kalamn_filter.cpp
+    buff_src/buff_recognize.cpp
     )
 
 
-include_directories(${OpenCV_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS} include)
+include_directories(${OpenCV_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS} include/Armor include/Buff include)
 
 
 target_link_libraries(recognize ${OpenCV_LIBS} openvino::runtime ${YAML_CPP_LIBRARIES})
