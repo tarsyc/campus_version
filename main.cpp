@@ -44,7 +44,7 @@ int main()
             cv::imshow("frame",res);
         }
         //cv::waitKey(0);
-        if(cv::waitKey(30) == 'q')                                   
+        if(cv::waitKey(15) == 'q')                                   
             break;
     }   
 } 

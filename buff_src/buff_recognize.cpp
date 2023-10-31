@@ -32,6 +32,8 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
             contours.erase(contours.begin()+i);
             i--;
         }
+        //寻找实心圆形轮廓
+
     }
     //合并轮廓
     vector<vector<Point>> merge_contours;
@@ -62,7 +64,8 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
         }
     }
     vector<RotatedRect> finalRects;
-    //对轮廓进行筛选，面积不能太小或太大，并且长宽比不能太大    
+    //对轮廓进行筛选，面积不能太小或太大，并且长宽比不能太大,并且寻找1:1的实心圆形轮廓
+
     for(int i=0;i<merge_contours.size();i++)
     {
         RotatedRect rotatedRect = minAreaRect(merge_contours[i]);
@@ -136,9 +139,86 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
                 pred = i;
             }
         }
-        putText(roi_img, to_string(pred), finalRects[i].center, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2, 8);
+        if(pred==0)
+        {
+            //用红色绘制出旋转矩形
+            Point2f points[4];
+            finalRects[i].points(points);
+            for(int j=0;j<4;j++)
+            {
+                line(roi_img,points[j],points[(j+1)%4],Scalar(0,0,255),2);
+            }
+            //计算旋转矩形的最大外接矩形
+            Point2f center = finalRects[i].center;
+            float angle = finalRects[i].angle;
+            float width = finalRects[i].size.width;
+            float height = finalRects[i].size.height;
+            Point2f rect_points[4];
+            finalRects[i].points(rect_points);
+            float x_min = 10000,x_max = 0,y_min = 10000,y_max = 0;
+            for(int j=0;j<4;j++)
+            {
+                if(rect_points[j].x<x_min)
+                x_min = rect_points[j].x;
+                if(rect_points[j].x>x_max)
+                x_max = rect_points[j].x;
+                if(rect_points[j].y<y_min)
+                y_min = rect_points[j].y;
+                if(rect_points[j].y>y_max)
+                y_max = rect_points[j].y;
+            }
+            //截取矩形区域
+            Rect rect(x_min,y_min,x_max-x_min,y_max-y_min);
+            //保存左上角点
+            Point2f left_top = Point2f(x_min,y_min);
+            Mat roiimage=roi_img.clone();
+            Mat roi_rect = roiimage(rect);
+            cvtColor(roi_rect,roi_rect,COLOR_BGR2HSV);
+            inRange(roi_rect, Scalar(73, 80, 175), Scalar(107, 255, 255), roi_rect);
+            
+            floodFill(roi_rect,Point2f(0,0),Scalar(255));
+            //反色
+            bitwise_not(roi_rect,roi_rect);
+            //使用矩形拟合
+            vector<vector<Point>> contours;
+            findContours(roi_rect,contours,RETR_EXTERNAL,CHAIN_APPROX_NONE);
+            for(int i=0;i<contours.size();i++)
+            {
+                //筛选掉过小的轮廓
+                if(contourArea(contours[i])<50)
+                {
+                    contours.erase(contours.begin()+i);
+                    i--;
+                }
+            }
+            //使用旋转矩形拟合
+            vector<RotatedRect> rotatedRects;
+            for(int j=0;j<contours.size();j++)
+            {
+                RotatedRect rotatedRect = minAreaRect(contours[j]);
+                rotatedRects.push_back(rotatedRect);
+            }
+            //画出最终的矩形
+            for(int j=0;j<rotatedRects.size();j++)
+            {
+                Point2f vertices[4];
+                rotatedRects[j].points(vertices);
+                for(int k=0;k<4;k++)
+                {
+                    //筛选出长宽比1：1的矩形,画出每个旋转矩形的中心点
+                    if(abs(rotatedRects[j].size.width/rotatedRects[j].size.height)<1.2&&abs(rotatedRects[j].size.width/rotatedRects[j].size.height)>0.8){
+                    line(roi_img,vertices[k]+left_top,vertices[(k+1)%4]+left_top,Scalar(0,255,0),2);
+                    circle(roi_img,rotatedRects[j].center+left_top,2,Scalar(0,0,255),2);
+                    }
+                
+
+                }
+            }
+        
+        }
 
     }
-    cout << endl;
+    
+
     return roi_img;
 }
