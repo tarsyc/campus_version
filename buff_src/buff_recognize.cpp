@@ -9,7 +9,7 @@ using namespace std;
 using namespace cv;
 using namespace ov;
 
-Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
+Mat buff_recognize(Mat frame, int tar_color)
 {
     Mat roi,roi_img;
     Rect roi_rect(frame.cols / 2 - 300, frame.rows / 2-300 , 600, 600);//roi范围
@@ -35,7 +35,6 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
         //寻找实心圆形轮廓
 
     }
-    //合并轮廓
     vector<vector<Point>> merge_contours;
     vector<double> angles;
     for(int i=0;i<contours.size();i++)
@@ -85,6 +84,7 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
             line(roi_img,vertices[j],vertices[(j+1)%4],Scalar(0,255,0),2);
         }
     }
+    //******************************************************************
     //将roi_img 旋转到旋转矩形的角度，然后框选
     vector<Mat> roi_cuts;
     for(int i=0;i<finalRects.size();i++)
@@ -209,16 +209,15 @@ Mat Buff_manage::buff_recognize(Mat frame, int tar_color)
                     if(abs(rotatedRects[j].size.width/rotatedRects[j].size.height)<1.2&&abs(rotatedRects[j].size.width/rotatedRects[j].size.height)>0.8){
                     line(roi_img,vertices[k]+left_top,vertices[(k+1)%4]+left_top,Scalar(0,255,0),2);
                     circle(roi_img,rotatedRects[j].center+left_top,2,Scalar(0,0,255),2);
+                    //使用旋转矩形的左下角点和角度，创建一个1/2长度的矩形
+                    
                     }
-                
-
-                }
+                 }
             }
+            //解算旋转矩形的中心点
         
         }
 
     }
-    
-
     return roi_img;
 }

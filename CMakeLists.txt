@@ -12,7 +12,8 @@ set(SOURCES
     armor_src/pose_estimation.cpp
     armor_src/decision_makeing.cpp
     armor_src/kalamn_filter.cpp
-    buff_src/buff_recognize.cpp
+    buff_src/buff_detect.cpp
+    buff_src/buff_cnn.cpp
     main.cpp
 )
 
@@ -30,7 +31,8 @@ add_executable(recognize main.cpp
     armor_src/pose_estimation.cpp
     armor_src/decision_makeing.cpp
     armor_src/kalamn_filter.cpp
-    buff_src/buff_recognize.cpp
+    buff_src/buff_detect.cpp
+    buff_src/buff_cnn.cpp
     )
 
 

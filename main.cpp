@@ -40,11 +40,11 @@ int main()
         }
         else if(mode==0)
         {
-            cv::Mat res=buff_manage.buff_recognize(frame,color);
+            cv::Mat res=buff_manage.update(frame);
             cv::imshow("frame",res);
         }
         //cv::waitKey(0);
-        if(cv::waitKey(15) == 'q')                                   
+        if(cv::waitKey(5) == 'q')                                   
             break;
     }   
 } 
