@@ -44,6 +44,7 @@ class Buff_manage
     int tar_color = 0;
     void buff_detect(cv::Mat frame, cv::Mat frame_peocess,std::vector<cv::RotatedRect> &final_rects);//大符识别函数
     int buff_cnn(cv::Mat frame,cv::Mat frame_process, cv::RotatedRect rect);//判断是否为待击打目标函数
-    void find_r(cv::Mat frame,cv::Mat frame_process,cv::RotatedRect rect);//寻找r通道函数
+    void find_r(cv::Mat frame,cv::Mat frame_process,cv::RotatedRect rect);//寻找r和待击打点函数
+    cv::Point2f buff_solve(cv::Mat frame,cv::Mat frame_process,cv::RotatedRect rect);//解算函数
 };
 #endif

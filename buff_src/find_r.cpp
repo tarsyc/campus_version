@@ -78,12 +78,16 @@ void Buff_manage::find_r(Mat frame, Mat frame_process, RotatedRect rect)
         float width = rotatedRects[i].size.width;
         float height = rotatedRects[i].size.height;
         double ratio = max(width/height,height/width)/min(width/height,height/width);
+        cv::Point2f tarpoint=rotatedRects[i].center + left_top;
         if(ratio<1.5&&ratio>0.5)
         {
-            circle(frame, rotatedRects[i].center + left_top, 2, Scalar(0, 0, 255), 2);
-            line(frame, center, rotatedRects[i].center + left_top, Scalar(0, 255, 255), 2);//紫色
+            circle(frame, tarpoint, 2, Scalar(0, 0, 255), 2);
+            line(frame, center, tarpoint, Scalar(0, 255, 255), 2);//紫色
+            float r = sqrt(pow((center.x - tarpoint.x), 2) + pow((center.y - tarpoint.y), 2));
+            circle(frame, center, r, Scalar(255, 0, 255), 2);//紫色
             break;
         }
     }
-
-}
+    //绘制以circle为圆心的圆,半径为圆心到待击打点的距离
+    
+}   
