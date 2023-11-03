@@ -43,8 +43,7 @@ int main()
             cv::Mat res=buff_manage.update(frame);
             cv::imshow("frame",res);
         }
-        //cv::waitKey(0);
-        if(cv::waitKey(5) == 'q')                                   
+        if(cv::waitKey(1) == 'q')                                   
             break;
     }   
 } 

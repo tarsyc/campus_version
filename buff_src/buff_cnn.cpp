@@ -3,20 +3,27 @@
 #include <openvino/openvino.hpp>    
 #include "Buff.h"
 #include "Buff_manage.h"
+#include <yaml-cpp/yaml.h>
 
 using namespace std;
 using namespace cv;
 using namespace ov;
 
-int Buff_manage::buff_cnn(Mat hsv, RotatedRect rect)
+int Buff_manage::buff_cnn(Mat frame,Mat frame_process,RotatedRect rect)
 {
     //传入图像为hsv图像
     //对传入图像进行处理
+    Mat hsv=frame_process.clone();
     Mat roi;//截取的部分
     Mat rotationMatrix=getRotationMatrix2D(rect.center,rect.angle,1.0);
-    warpAffine(hsv,roi,rotationMatrix,hsv.size());
-    Rect roi_rect(rect.center.x-rect.size.width/2,rect.center.y-rect.size.height/2,rect.size.width,rect.size.height);
-    roi = hsv(roi_rect);
+    warpAffine(hsv,hsv,rotationMatrix,hsv.size());
+    int x = max(0, static_cast<int>(rect.center.x - rect.size.width / 2));
+    int y = max(0, static_cast<int>(rect.center.y - rect.size.height / 2));
+    int width = min(static_cast<int>(rect.size.width), hsv.cols - x);
+    int height = min(static_cast<int>(rect.size.height), hsv.rows - y);
+    Rect roi_rect(x, y, width, height);
+    roi=hsv(roi_rect);
+    //imshow("roi",roi);
     resize(roi,roi,Size(32,32));
     Core core;
     CompiledModel model = core.compile_model("../config/nn.onnx", "CPU");
@@ -39,6 +46,17 @@ int Buff_manage::buff_cnn(Mat hsv, RotatedRect rect)
             max=output_buffer[i];
             pred=i;
         }
+    }
+    if(pred==0)
+    {
+        //用红色绘制出旋转矩
+        Point2f rect_points[4];
+        rect.points(rect_points);
+        for(int j=0;j<4;j++)
+        {
+            line(frame,rect_points[j],rect_points[(j+1)%4],Scalar(0,0,255),2);
+        }
+        
     }
     return pred;
 }

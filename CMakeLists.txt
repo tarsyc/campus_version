@@ -14,6 +14,7 @@ set(SOURCES
     armor_src/kalamn_filter.cpp
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
+    buff_src/find_r.cpp
     main.cpp
 )
 
@@ -33,6 +34,7 @@ add_executable(recognize main.cpp
     armor_src/kalamn_filter.cpp
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
+    buff_src/find_r.cpp
     )
 
 
