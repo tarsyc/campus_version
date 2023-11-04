@@ -15,12 +15,14 @@ set(SOURCES
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
+    buff_src/buff_solve.cpp
     main.cpp
 )
 
 find_package(OpenCV 4.8 REQUIRED)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 find_package(yaml-cpp REQUIRED)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 
 add_executable(recognize main.cpp 
@@ -35,10 +37,11 @@ add_executable(recognize main.cpp
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
+    buff_src/buff_solve.cpp
     )
 
 
-include_directories(${OpenCV_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS} include/Armor include/Buff include)
+include_directories(${OpenCV_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS} include/Armor include/Buff include usr/include)
 
 
-target_link_libraries(recognize ${OpenCV_LIBS} openvino::runtime ${YAML_CPP_LIBRARIES})
+target_link_libraries(recognize ${OpenCV_LIBS} openvino::runtime ${YAML_CPP_LIBRARIES} Eigen3::Eigen)

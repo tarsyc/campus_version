@@ -24,11 +24,13 @@ int main()
     Buff_manage buff_manage;//加载buff管理类
     cv::VideoCapture cap("/home/tarsyc/energy.mp4");
     cv::Mat frame;
+    int timestamp=0;
     int mode=0;
     cv::namedWindow("frame",cv::WINDOW_AUTOSIZE);
     while(true)
     {
         cap >> frame;
+        timestamp++;
         if(mode==1){
         temp_armors.clear();
         cv::Mat res=light_bar.update(frame,temp_armors,timestamp);//灯条识别
@@ -40,7 +42,7 @@ int main()
         }
         else if(mode==0)
         {
-            cv::Mat res=buff_manage.update(frame);
+            cv::Mat res=buff_manage.update(frame,timestamp);
             cv::imshow("frame",res);
         }
         if(cv::waitKey(1) == 'q')                                   
