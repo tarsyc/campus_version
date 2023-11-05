@@ -56,8 +56,6 @@ Point2f Buff_manage::find_r(Mat frame, Mat frame_process, RotatedRect rect)
     Mat roi_rect = find_roi(tar_rect);
     floodFill(roi_rect, Point2f(0,0), Scalar(255));
     bitwise_not(roi_rect, roi_rect);
-    
-    imshow("roi_rect", roi_rect);
     vector<vector<Point>> contours;
     findContours(roi_rect, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);
     for(int i=0;i<contours.size();i++)

@@ -16,6 +16,7 @@ set(SOURCES
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
     buff_src/buff_solve.cpp
+    buff_src/buff_pnp.cpp
     main.cpp
 )
 
@@ -38,6 +39,7 @@ add_executable(recognize main.cpp
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
     buff_src/buff_solve.cpp
+    buff_src/buff_pnp.cpp
     )
 
 

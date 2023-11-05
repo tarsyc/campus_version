@@ -30,6 +30,8 @@ class Buff_manage
         cv::inRange(frame_process, cv::Scalar(0, 100, 92), cv::Scalar(60, 255, 255), frame_process);
         buff_detect(frame,frame_process,final_rects);//大符识别
         //神经网络识别
+        int last_angle=0;
+        int angle=0;
         for(int i=0;i<final_rects.size();i++)
         {
             int pred=buff_cnn(frame,frame_process,final_rects[i]);
@@ -38,14 +40,18 @@ class Buff_manage
                 putText(frame,"BUFF_FOUND!",cv::Point2f(100,100),1,1,cv::Scalar(0,0,255));
                 cv::Point2f tar_point=find_r(frame,frame_process,final_rects[i]);
                 targets.push_back({tar_point,timestamp});
+                //解算角度和距离
+                angle=buff_pnp(frame,final_rects[i]);
+                last_angle=angle;
+                
                 break;
             }
         }
         //进行精细识别，准备击打
         if(targets.size()!=0)
         {
-            cv::Point2f final_point=buff_solve(frame,targets);
-            cv::circle(frame,final_point,5,cv::Scalar(0,0,255),2);
+            //cv::Point2f final_point=buff_solve(frame,targets);
+            //cv::circle(frame,final_point,5,cv::Scalar(0,0,255),2);
         }
         return frame;
     }
@@ -56,6 +62,7 @@ class Buff_manage
     void buff_detect(cv::Mat frame, cv::Mat frame_peocess,std::vector<cv::RotatedRect> &final_rects);//大符识别函数
     int buff_cnn(cv::Mat frame,cv::Mat frame_process, cv::RotatedRect rect);//判断是否为待击打目标函数
     cv::Point2f find_r(cv::Mat frame,cv::Mat frame_process,cv::RotatedRect rect);//寻找r和待击打点函数
-    cv::Point2f buff_solve(cv::Mat frame,std::vector<target> targets);//解算函数
+    cv::Point2f buff_solve(cv::Mat frame,std::vector<target> targets);///最小二乘法
+    double buff_pnp(cv::Mat frame,cv::RotatedRect rect);//solvepnp解算
 };
 #endif
