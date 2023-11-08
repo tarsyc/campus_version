@@ -15,7 +15,7 @@ set(SOURCES
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
-    buff_src/buff_solve.cpp
+    buff_src/buff_predict.cpp
     buff_src/buff_pnp.cpp
     main.cpp
 )
@@ -23,7 +23,10 @@ set(SOURCES
 find_package(OpenCV 4.8 REQUIRED)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 find_package(yaml-cpp REQUIRED)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 REQUIRED)
+
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 
 
 add_executable(recognize main.cpp 
@@ -38,7 +41,7 @@ add_executable(recognize main.cpp
     buff_src/buff_detect.cpp
     buff_src/buff_cnn.cpp
     buff_src/find_r.cpp
-    buff_src/buff_solve.cpp
+    buff_src/buff_predict.cpp
     buff_src/buff_pnp.cpp
     )
 

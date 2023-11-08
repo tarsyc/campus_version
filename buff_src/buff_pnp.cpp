@@ -12,7 +12,7 @@ const double fov = M_PI / 3.0;  // 视场角以弧度表示
 const int frame_width = 1920;
 const int frame_height = 1080;
 
-double Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
+Mat Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
 {
     //solvePnP
     float fx = frame_width / (2 * tan(fov / 2));
@@ -39,14 +39,13 @@ double Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
     solvePnP(world_points, camera_points, camera_matrix, distortion_coefficients, rotation_vector, translation_vector);
     //平移向量转换为距离
     double distance = sqrt(translation_vector.dot(translation_vector));
-    cout << "distance:" << distance << endl;
+    //cout << "distance:" << distance << endl;
     //旋转向量转换为旋转矩阵
-    Mat rotation_matrix;
-    Rodrigues(rotation_vector, rotation_matrix);
-    //旋转矩阵转换为相对于像素坐标系的角度
+    //通过上一帧和当前帧的旋转矩阵求解角度差值
 
 
-    return distance;
+
+    return rotation_vector;
 }
 
 

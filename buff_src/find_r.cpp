@@ -86,12 +86,12 @@ Point2f Buff_manage::find_r(Mat frame, Mat frame_process, RotatedRect rect)
             tar_point = Point2f(tarpoint.x, tarpoint.y);
             float r = sqrt(pow((center.x - tarpoint.x), 2) + pow((center.y - tarpoint.y), 2));
             circle(frame, center, r, Scalar(255, 0, 255), 2);//紫色
-            //将tarpoint和当前timestamp存入vector
             break;
         }
     }
     //返回中心r的外接矩形
-
+    r_center=center;
+    tarcenter=tar_point;
     return tar_point;
     
 }   
