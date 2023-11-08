@@ -109,6 +109,9 @@ angle = angle * 180 / CV_PI;
         //***********************************神经网络识别
         double detal=buff_predict(frame, omega, time);
         std::cout<<"detal:"<<detal<<std::endl;
+        //使用返回的角度，顺时针画出预测点
+        
+       
         //***********************************进行目标预测
 
         return frame;

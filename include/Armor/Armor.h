@@ -17,7 +17,7 @@ class Armor
     std::vector<cv::Point2f>objectPoints;
     std::vector<cv::Point2f>imagePoints;
     Armor(cv::Mat& frame,const cv::Point2f& center, float width, float height, float angle,long long int timestamp) : center(center), width(width), height(height), angle(angle),timestamp(timestamp) {
-    digital = cnn_recognize(frame);
+    //digital = cnn_recognize(frame);
     distance = pose_estimation();
     }
     void update(cv::Point2f center, float width, float height, float angle, long long int timestamp)//更新函数

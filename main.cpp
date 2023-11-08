@@ -22,9 +22,9 @@ int main()
     Armor_manager armor_manager; // 加载装甲板管理类
     Decision_making decision_making; // 加载决策类
     Buff_manage buff_manage; // 加载buff管理类
-    cv::VideoCapture cap("/home/tarsyc/energy.mp4");
+    cv::VideoCapture cap("/home/tarsyc/2023-11-09 01-11-31.mp4");
     cv::Mat frame;
-    int mode = 0;
+    int mode = 1;
     cv::namedWindow("frame", cv::WINDOW_AUTOSIZE);
 
     while (true)
@@ -51,7 +51,7 @@ int main()
             cv::imshow("frame", res);
         }
 
-        if (cv::waitKey(1) == 'q')
+        if (cv::waitKey(60) == 'q')
             break;
     }
 }
