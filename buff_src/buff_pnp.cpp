@@ -12,7 +12,7 @@ const double fov = M_PI / 3.0;  // 视场角以弧度表示
 const int frame_width = 1920;
 const int frame_height = 1080;
 
-Mat Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
+double Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
 {
     //solvePnP
     float fx = frame_width / (2 * tan(fov / 2));
@@ -45,7 +45,7 @@ Mat Buff_manage::buff_pnp(Mat frame, RotatedRect rect)
 
 
 
-    return rotation_vector;
+    return distance;
 }
 
 

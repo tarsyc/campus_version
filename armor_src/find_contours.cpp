@@ -6,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-Mat Light_bar::find_contours(Mat frame, Mat hsv, vector<Armor>& temp_armors,long long int timestamp)
+Mat Light_bar::find_contours(Mat frame, Mat hsv, vector<Armor>& temp_armors,double timestamp)
 {
     // 寻找轮廓，拟合轮廓
     //resize(frame, frame, cv::Size(640, 480));

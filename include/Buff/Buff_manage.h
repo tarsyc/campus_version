@@ -23,10 +23,11 @@ public:
     double current_time;
     std::vector<double>omega;
     std::vector<double>time;
+    double distance;
     //********************************
 
 
-    cv::Mat update(cv::Mat frame, long long timestamp)
+    cv::Point3f update(cv::Mat frame, double time_stamp)
     {
         //************************************图像预处理
         cv::Mat frame_process = frame.clone();
@@ -64,23 +65,24 @@ public:
         {
             putText(frame, "BUFF_FOUND!", cv::Point2f(100, 100), 1, 1, cv::Scalar(0, 0, 255));
             cv::Point2f tar_point = find_r(frame, frame_process, final_rects[max_i]);
-            cv::Mat R_now = buff_pnp(frame, final_rects[max_i]);//旋转矩阵
+            distance = buff_pnp(frame, final_rects[max_i]);//旋转矩阵
             //使用圆心到待击打点和x轴的夹角作为current_angle
             //使用时间戳作为current_time
             //使用past_angle和past_time作为上一次的角度和时间
             cv::Point2f x_axis(1, 0);
-cv::Point2f target_vector = tarcenter - r_center;
+            cv::Point2f target_vector = tarcenter - r_center;
 
-double dot_product = x_axis.x * target_vector.x + x_axis.y * target_vector.y;
-double magnitude_product = cv::norm(x_axis) * cv::norm(target_vector);
+            double dot_product = x_axis.x * target_vector.x + x_axis.y * target_vector.y;
+            double magnitude_product = cv::norm(x_axis) * cv::norm(target_vector);
 
-double angle = acos(dot_product / magnitude_product);
+            double angle = acos(dot_product / magnitude_product);
 
-// 将角度从弧度转换为度
-angle = angle * 180 / CV_PI;
+            // 将角度从弧度转换为度
+            angle = angle * 180 / CV_PI;
 
             current_angle=angle;
-            current_time=timestamp;
+            //使用时间戳作为current_time
+            current_time=time_stamp;
             if(past_angle==0)
             {
                 past_angle=current_angle;
@@ -109,12 +111,20 @@ angle = angle * 180 / CV_PI;
         //***********************************神经网络识别
         double detal=buff_predict(frame, omega, time);
         std::cout<<"detal:"<<detal<<std::endl;
-        //使用返回的角度，顺时针画出预测点
-        
-       
-        //***********************************进行目标预测
+        detal=-detal;
+        cv::Point2f predict_point;
+        //算出r的大小
+        double r=cv::norm(r_center-tarcenter);
+        //画出在圆上的点
+        predict_point.x=r_center.x+r*cos(detal);
+        predict_point.y=r_center.y+r*sin(detal);
+        cv::circle(frame, predict_point, 2, cv::Scalar(0, 0, 255), 2);
 
-        return frame;
+        
+        //***********************************进行目标预测
+        cv::imshow("frame", frame);
+        cv::waitKey(15);
+        return cv::Point3f(r_center.x,r_center.y, distance);
     }
 
 private:
@@ -123,7 +133,7 @@ private:
     int buff_cnn(cv::Mat frame, cv::Mat frame_process, cv::RotatedRect rect);                             // 判断是否为待击打目标函数
     cv::Point2f find_r(cv::Mat frame, cv::Mat frame_process, cv::RotatedRect rect);                         // 寻找r和待击打点函数
     double buff_predict(cv::Mat frame, std::vector<double> omage, std::vector<double> time);                // 最小二乘法
-    cv::Mat buff_pnp(cv::Mat frame, cv::RotatedRect rect);                                                    // solvePnP解算
+    double buff_pnp(cv::Mat frame, cv::RotatedRect rect);                                                    // solvePnP解算
 };
 
 #endif
