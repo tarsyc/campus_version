@@ -9,15 +9,16 @@
 class Decision_making 
 {
     public:
-    void decision(cv::Mat& res, std::vector<Armor>& armors) {
+    int decision(cv::Mat& res, std::vector<Armor>& armors) {
     if (armors.empty()) {
         // 处理 armors 为空的情况
-        return;
+        return -1;
     }
     i = decision_making(armors);
     if (i >= 0 && i < armors.size()) {
         kalman_filter(res, armors[i].center, armors[i].distance);
     }
+    return i;
 }
 
     private:

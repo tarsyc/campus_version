@@ -18,8 +18,9 @@ std::vector<Buff> temp_buffs;   // 存储所有临时buff
 std::vector<Buff> buffs;        // 存储所有buff
 long long int timestamp = 0;   // 时间戳（以毫秒表示）
 
-cv::Point2f calculateyawpitch(cv::Point2f info, double distance)
+cv::Point2f calculateyawpitch(double yaw,double pitch,cv::Point2f info, double distance)
 { 
+    int fire = 1;
     int frame_width = 1280;
     int frame_height = 720;
     double fov=60;
@@ -47,14 +48,28 @@ cv::Point2f calculateyawpitch(cv::Point2f info, double distance)
     //计算焦距
     double f=frame_width/(2*tan(fov/2));
     //计算yaw和pitch
-    double yaw=atan(detal_x/f);
-    double pitch=atan(detal_y/f);
+    double yaw1=atan(detal_x/f);
+    double pitch1=atan(detal_y/f);
     cv::Point2f yaw_pitch;
-    yaw_pitch.x=yaw;
-    yaw_pitch.y=pitch;
-    //计算yaw和pitch的角度
-    //yaw_pitch.x=yaw_pitch.x*180/M_PI;
-    //yaw_pitch.y=yaw_pitch.y*180/M_PI;
+    yaw_pitch.x=yaw+yaw1;
+    yaw_pitch.y=pitch+pitch1;
+    //限制yaw和pitch的范围，yaw0-30，pitch0-360
+    if(yaw_pitch.x>30)
+    {
+        yaw_pitch.x=30;
+    }
+    else if(yaw_pitch.x<-30)
+    {
+        yaw_pitch.x=-30;
+    }
+    if(yaw_pitch.y>360)
+    {
+        yaw_pitch.y=yaw_pitch.y-360;
+    }
+    else if(yaw_pitch.y<0)
+    {
+        yaw_pitch.y=yaw_pitch.y+360;
+    }
     return yaw_pitch;
 }
 
@@ -81,7 +96,7 @@ int main()
     Armor_manager armor_manager; // 加载装甲板管理类
     Decision_making decision_making; // 加载决策类
     Buff_manage buff_manage; // 加载buff管理类
-    int mode = 0;
+    int mode = 1;
     cv::namedWindow("frame", cv::WINDOW_AUTOSIZE);
     //加载类
     while (true)
@@ -99,22 +114,31 @@ int main()
         {
         int fire = 1;
         cv::Mat frame=img.clone();
-        if (mode == 1)
+        if (mode == 1)//识别装甲板
         {
             temp_armors.clear();
             cv::Mat res = light_bar.update(frame, temp_armors, time_stamp); // 灯条识别
             armor_manager.process(res, armors, temp_armors, time_stamp); // 装甲板管理
             armor_manager.draw(res, armors); // 画出装甲板
-            decision_making.decision(res, armors); // 决策并跟踪
+            int max=decision_making.decision(res, armors); // 决策并跟踪
+            //投入calculateyawpitch函数
+            //cv::Point2f yaw_pitch = calculateyawpitch(message.yaw,message.pitch,armors[max].center, armors[max].distance);
+            cv::Point2f yaw_pitch = cv::Point2f(message.yaw, message.pitch);
+            net.sendControlMessage(network::SendStruct(yaw_pitch.x,yaw_pitch.y,fire, 0, 1280, 720));
             cv::imshow("frame", res);
+            cv::waitKey(15);
         }
-        else if (mode == 0)
+        else if (mode == 0)//识别能量机关
         {
             cv::Point3f target = buff_manage.update(frame, time_stamp);
-            cv::Point2f yaw_pitch = cv::Point2f(target.x, target.y);
+            //cv::Point2f yaw_pitch = cv::Point2f(target.x, target.y);
             float distance = target.z;
-            cv::Point2f yaw_pitch_info = calculateyawpitch(yaw_pitch, distance);
-           net.sendControlMessage(network::SendStruct(yaw_pitch_info.y+message.pitch, yaw_pitch_info.x+message.yaw, fire, 0, 1280, 720));
+            //cv::Point2f yaw_pitch_info = calculateyawpitch(message.yaw,message.pitch,yaw_pitch, distance);
+            //yaw_pitch.x = yaw_pitch_info.x+message.yaw;
+            //yaw_pitch.y = yaw_pitch_info.y+message.pitch;
+            cv::Point2f yaw_pitch = cv::Point2f(message.yaw, message.pitch);
+
+           net.sendControlMessage(network::SendStruct(yaw_pitch.x,yaw_pitch.y,fire, 0, 1280, 720));
 
         }
       float  rotaion_speed = 1;
