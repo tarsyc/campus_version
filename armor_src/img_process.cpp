@@ -17,8 +17,8 @@ Mat Light_bar::image_process(Mat frame,int tar_color)
     else if(tar_color == 0)//red
     inRange(hsv, Scalar(0, 100, 92), Scalar(60, 255, 255), hsv);
     //膨胀
-    //Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
-    //dilate(hsv, hsv, element);
-    imshow("hsv",hsv);
+    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
+    dilate(hsv, hsv, element);
+    //imshow("hsv",hsv);
     return hsv;
 }

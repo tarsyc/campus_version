@@ -114,17 +114,20 @@ public:
         detal=-detal;
         cv::Point2f predict_point;
         //算出r的大小
-        double r=cv::norm(r_center-tarcenter);
-        //画出在圆上的点
-        predict_point.x=r_center.x+r*cos(detal);
-        predict_point.y=r_center.y+r*sin(detal);
-        cv::circle(frame, predict_point, 2, cv::Scalar(0, 0, 255), 2);
+        double r=cv::norm(r_center-tarcenter);//极径
 
-        
+        //画出在圆上的点
+    
+        double theta = std::atan2(tarcenter.y, tarcenter.x);//计算极角
+
+        predict_point.x = r * std::cos(theta + detal);
+        predict_point.y = r * std::sin(theta + detal);
+        cv::circle(frame, predict_point, 5, cv::Scalar(0, 0, 255), -1);
+
         //***********************************进行目标预测
-        cv::imshow("frame", frame);
-        cv::waitKey(15);
-        return cv::Point3f(r_center.x,r_center.y, distance);
+        //cv::imshow("frame", frame);
+        //cv::waitKey(15);
+        return cv::Point3f(tarcenter.x,tarcenter.y, distance);
     }
 
 private:

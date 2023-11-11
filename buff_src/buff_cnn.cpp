@@ -23,7 +23,7 @@ int Buff_manage::buff_cnn(Mat frame,Mat frame_process,RotatedRect rect)
     int height = min(static_cast<int>(rect.size.height), hsv.rows - y);
     Rect roi_rect(x, y, width, height);
     roi=hsv(roi_rect);
-    imshow("roi",roi);
+    //imshow("roi",roi);
     resize(roi,roi,Size(32,32));
     Core core;
     CompiledModel model = core.compile_model("../config/nn.onnx", "CPU");

@@ -50,7 +50,7 @@ double Buff_manage::buff_predict(Mat frame, vector<double> omage, vector<double>
     //cout << "Fitted Parameters: a=" << params(0) << " omega=" << params(1) << " b=" << params(2) << endl;
 
     // 预测 t 秒后的角度变化
-    double t_prediction = 200;  // 预测的时间（假设单位是ms）
+    double t_prediction = 0.2;  // 预测的时间（假设单位是s）
     double angle_change_prediction = integrateAngularSpeed(params, t_prediction);
     double angle = angle_change_prediction * 180 / M_PI;
 
